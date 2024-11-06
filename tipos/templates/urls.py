@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('tipos/', views.list_imoveis, name='list_tipos'),
+    path('tipos/', views.list_tipos, name='list_tipos'),
 
 # rotas fechadas
 
