@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 from pathlib import Path
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 # Carregar o arquivo .env
@@ -20,7 +21,6 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -28,11 +28,50 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=+f=pkz*b6-6i(r)_l-eo=zg1f^s!r@f*_h9)+amr$m)4@80k='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(',')
 
 LOGIN_URL = 'login'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Redis definition
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD')
+REDIS_SSL = os.getenv('REDIS_SSL')
+
+REDIS_URL = f'rediss://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/0'
+# Celery definition
+
+## Configuração do backend de resultados e do agendador Celery
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+
+# Adicione esta configuração para uso de SSL com Redis
+CELERY_REDIS_BACKEND_USE_SSL = {
+    'ssl_cert_reqs': 'CERT_NONE'
+}
+
+## Configuração do Celery Beat (agendamento de tarefas)
+CELERY_BEAT_SCHEDULE = {
+    'verificar_data_inicio': {
+        'task': 'tipos.tasks.verificar_data_inicio',
+        'schedule': crontab(hour=3, minute=26), # Executa diariamente às 9h
+    }
+}
+
+# E-mail definition
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')  # Valor padrão: 'smtp.gmail.com'
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))  # Converte a porta para um inteiro
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'  # Converte para booleano
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
 
 # Application definition
 
@@ -44,6 +83,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tipos',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -82,8 +123,12 @@ WSGI_APPLICATION = 'gestao_eventos.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.getenv('DB_USER', ''),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', ''),
     }
 }
 
@@ -106,16 +151,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'pt-br'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'pt-br'  # Define o idioma como Português Brasileiro
+TIME_ZONE = 'America/Sao_Paulo'  # Define o fuso horário como horário de Brasília
 
 USE_I18N = True
-
 USE_TZ = True
 
 

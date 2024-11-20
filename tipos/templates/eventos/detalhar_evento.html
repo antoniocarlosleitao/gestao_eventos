@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Evento{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+    .carousel-item img {
+        height: 400px; /* Ajuste a altura conforme necessário */
+        width: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Detalhes do Evento</h1>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">{{ evento.tipo_evento }} - {{ evento.endereco }}</h2>
+        </div>
+        <div class="card-body">
+
+            <!-- Carrossel de Imagens -->
+            <div id="carouselEvento" class="carousel slide mb-4" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for imagem in eventol.imagens.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ imagem.imagem.url }}" class="d-block w-100" alt="Imagem do Evento">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselEvento" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselEvento" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Próximo</span>
+                </button>
+            </div>
+
+            <!-- Informações do Evento -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Endereço:</strong> {{ evento.endereco }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Bairro:</strong> {{ evento.bairro }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <p><strong>Cidade:</strong> {{ evento.cidade }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Estado:</strong> {{ evento.estado }}</p>
+                </div>
+            </div>
+            <p><strong>Descrição:</strong> {{ evento.descricao }}</p>
+            <p><strong>Preço do Evento:</strong> R$ {{ evento.preco_evento }}</p>
+
+            <!-- Mapa de Localização -->
+            <div class="mb-4">
+                <h5>Localização no Mapa:</h5>
+                <div id="display_name"></div>
+                <div id="map" style="height: 400px; width: 100%" class="rounded border"></div>
+            </div>
+            <a href="{% url 'list_eventos' %}" class="btn btn-secondary">Voltar para a Lista de Eventos</a>
+        </div>
+    </div>
+
+    <!-- Formulário de Contato -->
+    <div class="col-md-4 mt-5 offset-4 mb-5">
+        <h4>Entre em Contato</h4>
+        <form method="post" action="{% url 'contato_evento' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="mb-3">
+                <label for="cpf" class="form-label">CPF</label>
+                <input type="text" class="form-control" id="cpf" name="cpf" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="text" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="text" class="form-control" id="telefone" name="telefone" required>
+            </div>
+            <div class="mb-3">
+                <label for="mensagem" class="form-label">Mensagem</label>
+                <textarea class="form-control" id="mensagem" name="mensagem" rows="4">Tenho interesse no evento em {{ evento.endereco }} com o preço de R$ {{ evento.preco_evento }}</textarea>
+            </div>
+            <input type="hidden" id="identificador" name="identificador" value="{{ evento.identificador }}" required>
+            <input type="hidden" id="evento_id" name="evento_id" value="{{ evento.id }}" required>
+            <button type="submit" id="btn-enviar-msg" class="btn btn-primary">Enviar Mensagem</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([{{ latitude }}, {{ longitude }}], 13);
+    
+    document.getElementById('display_name').innerHTML = "{{ display_name }}";
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© Gestao de Eventos'
+    }).addTo(map);
+    
+    L.marker([{{ latitude }}, {{ longitude }}]).addTo(map)
+    .bindPopup("Localização")
+    .openPopup();
+</script>
+{% endblock %}

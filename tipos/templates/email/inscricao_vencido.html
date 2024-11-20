@@ -1,0 +1,8 @@
+{% extends 'email/base.html' %}
+{% block content %}
+    <p>Prezado {{ inscricao.participante.nome }},</p>
+    <p>Informamos que a inscrição do evento {{ nome_do_evento }} expirou.</p>
+    <p>Por favor, regularize o pagamento para confirmar sua inscrição.</p>
+    <p>Atenciosamente,</p>
+    <p><strong>Gestão de Eventos</strong></p>
+{% endblock %}

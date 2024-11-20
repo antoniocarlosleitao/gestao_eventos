@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from tipos.templates import views
 
 urlpatterns = [
     # rotas abertas

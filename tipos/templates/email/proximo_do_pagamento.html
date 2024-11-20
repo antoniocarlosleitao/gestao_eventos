@@ -1,0 +1,7 @@
+{% extends 'email/base.html' %}
+{% block content %}
+    <p>Prezado {{ inscricao.participante.nome }},</p>
+    <p>Esté é um lembrete de que o pagamento da inscrição do enevto {{ nome_do_evento }} que vence em {{ inscricao.data_vencimento }}.</p>
+    <p>Atenciosamente,</p>
+    <p><strong>Gestão de Eventos</strong></p>
+{% endblock %}

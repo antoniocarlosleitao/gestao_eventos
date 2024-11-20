@@ -1,9 +1,11 @@
-from tipos.forms import ConferenciaForm, PalestraForm, WorshopForm
-from tipos.models import Conferencia, Palestra, Workshop
+from tipos import forms
+from tipos.forms import EventoForm
+from tipos.models import Evento
+
 
 class ConferenciaForm(forms.ModelForm):
     class Meta:
-        model = Conferencia
+        model = Evento
         fields = ['nome_do_evento', 'data_inicio', 'hora_inicio', 'data_final', 'hora_final', 'endereco', 'cidade', 'estado', 'email_contato', 'valor_inscricao', 'descricao']
         widgets = {
             'nome_do_evento': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Digite nome do evento'}),

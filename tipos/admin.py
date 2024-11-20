@@ -1,7 +1,7 @@
 from django.contrib import admin
-from tipos.models import Conferencia, Palestra, Workshop
+from tipos.models import Evento, Participante, Inscricao
 
 # Register your models here.
-admin.site.register(Conferencia)
-admin.site.register(Palestra)
-admin.site.register(Workshop)
+admin.site.register(Evento)
+admin.site.register(Participante)
+admin.site.register(Inscricao)
