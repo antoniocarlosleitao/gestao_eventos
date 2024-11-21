@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}Relatório de Pagamentos{% endblock %}
+{% block content %}
+    <div class="container mt-4">
+        <h1>Relatório de Pagamentos</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags|alertformat }}{% endif %} alert-dismissible fade show" role="alert">
+                <strong>Atenção!</strong> {{ message }}.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+        <div class="alert alert-success">
+            <h4>Total Recebido: <strong>R$ {{ total_recebido|floatformat:2 }}</strong></h4>
+        </div>
+
+        <div class="mt-3 mb-4">
+            <a href="{% url 'exportar_relatorio_csv' %}" class="btn btn-primary">Exportar em CSV</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#graficoModal">
+                Gráfico de Pagamentos
+            </button>
+        </div>
+
+        <h3 class="mt-4">Pagamentos Pendentes:</h3>
+        {% if incricoes_pendentes %}
+            <table class="table table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Evento</th>
+                        <th>Valor da Inscrição</th>
+                        <th>Data de Pagamento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for evento in eventos_pendentes %}
+                    <tr>
+                        <td>{{ evento.participante.evento.endereco }}</td>
+                        <td>R$ {{ evento.valor|floatformat:2 }}</td>
+                        <td>{{ evento.data_pagamento|date:"d/m/Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                <p>Não há pagamentos pendentes.</p>
+            </div>
+        {% endif %}
+        <a href="{% url 'list_eventos' %}" class="btn btg-large btn-secondary">Voltar</a>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="graficoModal" tabindex="-1" aria-labelledby="graficoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="graficoModalLabel">Gráfico de Pagamentos Recebidos</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <canvas id="graficoPagamentos" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Script para carregar o gráfico dentro do modal -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Executa o código quando o modal é aberto
+        const graficoModal = document.getElementById('graficoModal');
+        graficoModal.addEventListener('show.bs.modal', function() {
+            fetch("{% url 'relatorio_avancado_json' %}")
+                .then(response => response.json())
+                .then(data => {
+                    // Extrair datas e valores dos dados JSON
+                    const labels = data.map(item => item.data_pagamento);
+                    const valores = data.map(item => item.total);
+
+                    // Configurar o gráfico usando Chart.js
+                    const ctx = document.getElementById('graficoPagamentos').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Total Recebido',
+                                data: valores,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

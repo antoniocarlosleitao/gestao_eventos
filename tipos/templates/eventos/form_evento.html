@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ title }}</h1>
+<form method="post" class="row g-3" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="col-md-2">
+        {{ form.tipo_evento.label_tag }}
+        {{ form.tipo_evento }}
+    </div>
+
+    <div class="col-md-2">
+        {{ form.data_inicio.label_tag }}
+        {{ form.data_inicio }}
+    </div>
+
+    <div class="col-md-8">
+        {{ form.hora_inicio.label_tag }}
+        {{ form.hora_inicio }}
+    </div>
+    <div class="col-md-4">
+        {{ form.data_final.label_tag }}
+        {{ form.data_final }}
+    </div>
+    <div class="col-md-4">
+        {{ form.hora_final.label_tag }}
+        {{ form.hora_final }}
+    </div>
+    <div class="col-md-2">
+        {{ form.endereco.label_tag }}
+        {{ form.endereco }}
+    </div>
+    <div class="col-md-2">
+        {{ form.cidade.label_tag }}
+        {{ form.cidade }}
+    </div>
+     <div class="col-md-2">
+        {{ form.estado.label_tag }}
+        {{ form.estado }}
+    </div>
+     <div class="col-md-2">
+        {{ form.email_contato.label_tag }}
+        {{ form.email_contato }}
+    </div>
+    <div class="col-md-2">
+        {{ form.valor_inscricao.label_tag }}
+        {{ form.valor_inscricao }}
+    </div>
+    <div class="col-12">
+        {{ form.descricao.label_tag }}
+        {{ form.descricao }}
+    </div>
+
+    <div class="col-12">
+        <label for="imagens" class="form-label">Fotos do Imóvel(máximo de 5 fotos)</label>
+        <input type="file" id="imagens" name="imagens" accept="image/*" multiple class="form-control" onchange="validateFileCount()">
+        <small class="text-muted">Você pode selecionar até 5 imagens.</small>
+    </div>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Salvar</button>
+        <a href="{% url 'list_imoveis' %}" class="btn btg-large btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.getElementById('id_cep').addEventListener('blur', function() {
+            const cep = this.value;
+            if(cep) {
+                fetch(`/buscar-endereco/?cep=${cep}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.erro) {
+                            alert(data.erro);
+                        } else {
+                            document.getElementById('id_endereco').value = data.endereco;
+                            document.getElementById('id_bairro').value = data.bairro;
+                            document.getElementById('id_cidade').value = data.cidade;
+                            document.getElementById('id_estado').value = data.estado;
+                            document.getElementById('id_cep').value = data.cep;
+                        }
+                    })
+                    .catch(error => {
+                        alert('Erro ao buscar o endereço: ' + error);
+                    });
+            }
+        });
+    </script>
+    <script>
+        function validateFileCount() {
+            const input = document.getElementById('imagens');
+            if(input.files.length > 5) {
+                alert("Você pode fazer upload de no máximo 5 imagens.");
+                input.value = '';
+            }
+        }
+    </script>
+{% endblock %}

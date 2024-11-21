@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Página Inicial{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <h1 class="display-4">Bem-vindo à Gestão de Eventos!</h1>
+    <p class="lead">Gerencie seus eventos, participantes, inscrições e pagamentos de maneira eficiente.</p>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        {% if request.user.is_authenticated %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Evento</h5>
+                    <p class="card-text">Visualize, adicione e edite seus eventos cadastrados no sistema.</p>
+                    <a href="{% url 'list_imoveis' %}" class="btn btn-primary">Ver Eventos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Participantes</h5>
+                    <p class="card-text">Gerencie os participantes e acompanhe suas informações e pagamentos.</p>
+                    <a href="{% url 'list_inquilinos' %}" class="btn btn-primary">Ver Participantes</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Inscrições</h5>
+                    <p class="card-text">Acesse os inscrições e acompanhe suas informações.</p>
+                    <a href="{% url 'listar_inscricoes' %}" class="btn btn-primary">Ver inscrições</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Relatórios</h5>
+                    <p class="card-text">Acesse relatórios detalhados sobre pagamentos e status das inscriões.</p>
+                    <a href="{% url 'relatorio_pagamentos' %}" class="btn btn-primary">Ver Relatórios</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center">
+            <h5 class="mt-4">Para acessar o sistema, faça login:</h5>
+            <a href="{% url 'login' %}" class="btn btn-primary mt-2">Login</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

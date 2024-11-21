@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Vitrine de Eventos{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+<style>
+    .evento-card img {
+        height: 200px;
+        width: 100%;
+        object-fit: cover;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Vitrine de Eventos</h1>
+<div class="container mt-5">
+    <div class="row">
+        {% for evento in eventos %}
+        <div class="col-md-4 mb-4">
+            <div class="card evento-card">
+                {% if evento.imagens.first %}
+                <img src="{{ evento.imagens.first.imagem.url }}" class="card-img-top" alt="Imagem do Evento">
+                {% else %}
+                <img src="/media/eventos/placeholder.png" class="card-img-top" alt="Imagem não disponível">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ evento.tipo_evento }} - {{ evento.endereco }}</h5>
+                    <p class="card-text"><strong>Bairro:</strong> {{ evento.bairro }}</p>
+                    <p class="card-text"><strong>Cidade:</strong> {{ evento.cidade }}, {{ evento.estado }}</p>
+                    <p class="card-text"><strong>Valor da Inscrição:</strong> R$ {{ evento.valor_inscricao }}</p>
+                    <a href="{% url 'detalhar_evento' evento.id %}" class="btn btn-primary">Ver Detalhes</a>
+                    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#contatoModal{{ evento.id }}">
+                        Contato
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Contato -->
+        <div class="modal fade" id="contatoModal{{ evento.id }}" tabindex="-1" aria-labelledby="contatoModalLabel{{ evento.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="contatoModalLabel{{ evento.id }}">Entre em Contato</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'contato_evento' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="telefone" name="telefone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="mensagem" class="form-label">Mensagem</label>
+                                <textarea class="form-control" id="mensagem" name="mensagem" rows="4">Tenho em participar do evento {{ evento.nome }} com o preço de R$ {{ evento.valor_inscricao }}</textarea>
+                            </div>
+                            <input type="hidden" id="identificador" name="identificador" value="{{ evento.identificador }}" required>
+                            <input type="hidden" id="evento_id" name="evento_id" value="{{ evento.id }}" required>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

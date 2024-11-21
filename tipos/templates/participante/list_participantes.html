@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Participante{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Lista de Participante</h1>
+
+<a class="btn btn-success" href="{% url 'adicionar_participante' %}">Adicionar Participante</a>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col">Nome</th>
+        <th scope="col">CPF</th>
+        <th scope="col">Telefone</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Ações</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for participante in participantes %}
+    <tr>
+        <td>{{ participante.nome }}</td>
+        <td>{{ participante.cpf }}</td>
+        <td>{{ participante.telefone }}</td>
+        <td>{{ participante.email }}</td>
+        <td>
+            <!-- Botão de Editar -->
+            <a class="btn btn-warning btn-sm" href="{% url 'editar_participante' participante.id %}">Editar</a>
+            <!-- Botão de Excluir -->
+            <a class="btn btn-danger btn-sm" href="{% url 'excluir_participante' participante.id %}">Excluir</a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">Nenhum participante cadastrado.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<ul>
+</ul>
+<a class="btn btn-secondary" href="{% url 'index' %}">Voltar</a>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de Imóveis{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Lista de imóveis</h1>
+
+<form method="GET" class="mb-4">
+    <div class="row">
+        <div class="col-md-3">
+            <input type="text" placeholder="Cidade" name="cidade" value="{{ request.GET.cidade }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" placeholder="Estado" name="estado" value="{{ request.GET.estado }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="number" placeholder="Preço Mínimo" name="preco_min" value="{{ request.GET.preco_min }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="number" placeholder="Preço Máximo" name="preco_max" value="{{ request.GET.preco_max }}" class="form-control">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-dark mt-3">Buscar</button>
+    <a href="{% url 'list_imoveis' %}" class="btn btn-secondary mt-3">Limpar Filtros</a>
+</form>
+{% if request.user.is_authenticated %}
+<a class="btn btn-success" href="{% url 'adicionar_imovel' %}">Adicionar Imóvel</a>
+{% endif %}
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Endereço</th>
+            <th scope="col">Cidade</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Preço do Aluguel</th>
+            {% if request.user.is_authenticated %}
+            <th scope="col">Ações</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for imovel in imoveis %}
+        <tr onclick="window.location='{% url 'detalhar_imovel' imovel.id %}'" style="cursor: pointer;">
+        <td>{{ imovel.endereco }}</td>
+            <td>{{ imovel.cidade }}</td>
+            <td>{{ imovel.estado }}</td>
+            <td>R$ {{ imovel.preco_aluguel }}</td>
+            {% if request.user.is_authenticated %}
+            <td>
+                <!-- Botão de Editar -->
+                <a class="btn btn-warning btn-sm" href="{% url 'editar_imovel' imovel.id %}">Editar</a>
+                <!-- Botão de Excluir -->
+                <a class="btn btn-danger btn-sm" href="{% url 'excluir_imovel' imovel.id %}">Excluir</a>
+            </td>
+            {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="{% if request.user.is_authenticated %}5{% else %}4{% endif %}">Nenhum imóvel cadastrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<ul>
+</ul>
+<a class="btn btn-secondary" href="{% url 'index' %}">Voltar</a>
+{% endblock %}
