@@ -18,6 +18,7 @@ from tipos.forms import EventoForm, ParticipanteForm, InscricaoForm
 from tipos.models import Evento, Participante, Inscricao, ImagemEvento
 from tipos.services.geocode import get_coordinates_from_address
 from tipos.services.search_address_by_cep import buscar_endereco_por_cep
+from tipos.urls import Conferencia, Palestra, Workshop
 
 
 # Página inicial
@@ -411,3 +412,18 @@ def envia_email(email, assunto, mensagem_html):
         mensagem=plain_message,
         mensagem_html=mensagem_html
     )
+
+    @login_required
+    def list_conferencia(request):
+        conferencias = Conferencia.objects.all()
+        return render(request, 'conferencias/list_conferencia', {'conferencias': conferencias})
+
+    @login_required
+    def list_palestra(request):
+        palestras = Palestra.objects.all()
+        return render(request, 'palestras/list_palestra', {'palestras': palestras})
+
+    @login_required
+    def list_workshop(request):
+        workshops = Workshop.objects.all()
+        return render(request, 'workshops/list_workshop', {'workshops': workshops})
