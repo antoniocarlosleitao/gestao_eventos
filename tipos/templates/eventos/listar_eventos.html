@@ -1,62 +1,75 @@
 {% extends 'base.html' %}
 
-{% block title %}Lista de Imóveis{% endblock %}
+{% block title %}Lista de Eventos{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Lista de imóveis</h1>
+<h1 class="mb-4">Lista de eventos</h1>
 
 <form method="GET" class="mb-4">
     <div class="row">
         <div class="col-md-3">
+            <input type="text" placeholder="Nome do Evento" name="nome_do_evento" value="{{ request.GET.nome_do_evento }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" placeholder="Data do Início" name="data_inicio" value="{{ request.GET.data_inicio }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" placeholder="Hora do Início" name="hora_inicio" value="{{ request.GET.hora_inicio }}" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="text" placeholder="Endereço" name="endereco" value="{{ request.GET.endereco }}" class="form-control">
+        </div>
+        <div class="col-md-3">
             <input type="text" placeholder="Cidade" name="cidade" value="{{ request.GET.cidade }}" class="form-control">
         </div>
         <div class="col-md-3">
-            <input type="text" placeholder="Estado" name="estado" value="{{ request.GET.estado }}" class="form-control">
+            <input type="number" placeholder="Valor Mínimo" name="valor_min" value="{{ request.GET.valor_min }}" class="form-control">
         </div>
         <div class="col-md-3">
-            <input type="number" placeholder="Preço Mínimo" name="preco_min" value="{{ request.GET.preco_min }}" class="form-control">
-        </div>
-        <div class="col-md-3">
-            <input type="number" placeholder="Preço Máximo" name="preco_max" value="{{ request.GET.preco_max }}" class="form-control">
+            <input type="number" placeholder="Valor Máximo" name="valor_max" value="{{ request.GET.valor_max }}" class="form-control">
         </div>
     </div>
     <button type="submit" class="btn btn-dark mt-3">Buscar</button>
-    <a href="{% url 'list_imoveis' %}" class="btn btn-secondary mt-3">Limpar Filtros</a>
+    <a href="{% url 'listar_eventos' %}" class="btn btn-secondary mt-3">Limpar Filtros</a>
 </form>
 {% if request.user.is_authenticated %}
-<a class="btn btn-success" href="{% url 'adicionar_imovel' %}">Adicionar Imóvel</a>
+<a class="btn btn-success" href="{% url 'adicionar_eventos' %}">Adicionar Eventos</a>
 {% endif %}
 <table class="table table-striped">
     <thead class="thead-dark">
         <tr>
+            <th scope="col">Nome do Evento</th>
+            <th scope="col">Data do Início</th>
+            <th scope="col">Hora do Início</th>
             <th scope="col">Endereço</th>
             <th scope="col">Cidade</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Preço do Aluguel</th>
+            <th scope="col">Valor da Inscrição</th>
             {% if request.user.is_authenticated %}
             <th scope="col">Ações</th>
             {% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for imovel in imoveis %}
-        <tr onclick="window.location='{% url 'detalhar_imovel' imovel.id %}'" style="cursor: pointer;">
-        <td>{{ imovel.endereco }}</td>
-            <td>{{ imovel.cidade }}</td>
-            <td>{{ imovel.estado }}</td>
-            <td>R$ {{ imovel.preco_aluguel }}</td>
+        {% for evento in eventos %}
+        <tr onclick="window.location='{% url 'detalhar_evento' evento.id %}'" style="cursor: pointer;">
+        <td>{{ evento.nome_do_evento }}</td>
+            <td>{{ evento.data_inicio }}</td>
+            <td>{{ evento.hora_inicio }}</td>
+            <td>{{ evento.endereço }}</td>
+            <td>{{ evento.cidade }}</td>
+            <td>R$ {{ evento.valor_inscricao }}</td>
             {% if request.user.is_authenticated %}
             <td>
                 <!-- Botão de Editar -->
-                <a class="btn btn-warning btn-sm" href="{% url 'editar_imovel' imovel.id %}">Editar</a>
+                <a class="btn btn-warning btn-sm" href="{% url 'editar_evento' evento.id %}">Editar</a>
                 <!-- Botão de Excluir -->
-                <a class="btn btn-danger btn-sm" href="{% url 'excluir_imovel' imovel.id %}">Excluir</a>
+                <a class="btn btn-danger btn-sm" href="{% url 'excluir_evento' evento.id %}">Excluir</a>
             </td>
             {% endif %}
         </tr>
         {% empty %}
         <tr>
-            <td colspan="{% if request.user.is_authenticated %}5{% else %}4{% endif %}">Nenhum imóvel cadastrado.</td>
+            <td colspan="{% if request.user.is_authenticated %}5{% else %}4{% endif %}">Nenhum evento cadastrado.</td>
         </tr>
         {% endfor %}
     </tbody>

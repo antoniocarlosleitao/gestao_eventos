@@ -41,13 +41,14 @@ class Evento(models.Model):
 # Modelo para as imagens do Evento
 class ImagemEvento(models.Model):
     evento = models.ForeignKey(Evento, related_name='imagens', on_delete=models.CASCADE)
-    imagem = models.ImageField(upload_to='eventos/')
+    imagem = models.ImageField(upload_to='tipos/')
     destaque = models.BooleanField(default=False)
     data_upload = models.DateTimeField(auto_now_add=True)
 
 # Modelo para Partcicipantes
 class Participante(models.Model):
     nome = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=20)
     telefone = models.CharField(max_length=20)
     email = models.EmailField()
     nome_do_evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
