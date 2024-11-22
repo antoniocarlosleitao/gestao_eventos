@@ -1,5 +1,6 @@
 import csv
 import datetime
+from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout

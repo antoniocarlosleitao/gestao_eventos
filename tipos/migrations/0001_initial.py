@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('bairro', models.CharField(max_length=100)),
                 ('cidade', models.CharField(max_length=100)),
                 ('estado', models.CharField(max_length=2)),
-                ('email_contato', models.EmailField(max_lenght=50)),
+                ('email_contato', models.EmailField(max_length=50)),
                 ('valor_inscricao', models.DecimalField(decimal_places=2, max_digits=8)),
                 ('descricao', models.TextField(blank=True, null=True)),
             ],
