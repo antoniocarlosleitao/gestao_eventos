@@ -386,13 +386,12 @@ def contato_evento(request):
             ano_atual = datetime.datetime.now().year
 
             mensagem_html = render_to_string('email/contato_imovel.html', {
-                'titulo_email': 'Contato Sobre Evento',
-                'content':
-                    f'''<p>Olá, o {nome} está interessado no evento {identificador}</p>
-                        <p><strong>Telefone:</strong> {telefone}</p>
-                        <p><strong>E-mail:</strong> {email}</p>
-                        <br>
-                        <p><strong>Mensagem do contato:</strong> {mensagem}</p>''',
+                'titulo_email': 'Contato Sobre Imóvel',
+                'nome': nome,
+                'identificador': identificador,
+                'telefone': telefone,
+                'email': email,
+                'mensagem': mensagem,
                 'ano_atual': ano_atual
             })
 
