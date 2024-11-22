@@ -18,8 +18,7 @@ from tipos.forms import EventoForm, ParticipanteForm, InscricaoForm
 from tipos.models import Evento, Participante, Inscricao, ImagemEvento
 from tipos.services.geocode import get_coordinates_from_address
 from tipos.services.search_address_by_cep import buscar_endereco_por_cep
-from tipos.urls import Conferencia, Palestra, Workshop
-
+from tipos.models import Conferencia, Palestra, Workshop
 
 # Página inicial
 def index(request):
